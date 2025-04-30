@@ -107,17 +107,35 @@ namespace WindowsFormsApp1
                 try
                 {
                     // 接收客户端发来的消息
-                    byte[] buffer = new byte[2048];
+                    byte[] buffer = new byte[4];
                     int r = socketSend.Receive(buffer);
                     if (r == 0)
                     {
                         break;
                     }
+
                     string str = Encoding.UTF8.GetString(buffer, 0, r);
+
+                    byte[] body = new byte[int.Parse(str)];
+                    int rb = socketSend.Receive(body);
+
+                    string bodys = Encoding.UTF8.GetString(body, 0, rb);
+
+
+                    //bodys 就是传输进来的数据了
+                    //一个正常的tcp网络传世应当遵循：
+                    //包头 4byte 【告知包体大小】
+                    //包体 根据包头告知的大小进行创建【本代码采用了这种】
+
+                    //标准协议应当为
+                    //包头 4byte 【告知包体大小】
+                    //协议 4byte 【传输数据命令】
+                    //加密 【根据自己的要求定】 一般为 4byte 或 8byte
+                    //包体 根据包头告知的大小进行创建
 
                     if (label3.InvokeRequired)
                     {
-                        Action SetText111 = delegate { showText(str); };
+                        Action SetText111 = delegate { showText(bodys); };
                         label3.Invoke(SetText111);
                     }
                     else
